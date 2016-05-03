@@ -1,0 +1,20 @@
+{
+  "name": "iceboxwebsite",
+  "version": "1.0.0",
+  "description": "Standard website for IceBox",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "mocha",
+    "startResourceLim": "nodemon --max_old_space_size=400 test.js --production  "
+  },
+  "directories": {
+    "test": "test"
+  },
+  "author": "@TVLuke",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.13.4",
+    "bonjour": "^3.2.0"
+  }
+}
