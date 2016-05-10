@@ -11,7 +11,7 @@ bonjour.find({
       app.get('/serviceip', function(req, res) {
         res.json({ ip: service.host })
       });
-      app.listen(80);
+      app.listen(8082);
     }
   });
 

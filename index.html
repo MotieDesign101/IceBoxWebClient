@@ -300,7 +300,7 @@
 
       function submitUserdata(mail, vdsFlag) {
         var call = $.ajax({
-          url: "http://" + iceBoxIp + ":8081/consumers/" + username,
+          url: "http://" + iceBoxIp + ":8081/consumers/" + encodeURIComponent(username),
           type: 'PUT',
           data: {
             avatarmail: mail,
@@ -318,8 +318,9 @@
 
       function rechargeAccoundWith(amountx, callback) {
         console.log("recharge account " + amountx);
+        console.log("recharge account for " + username);
         var call = $.ajax({
-          url: "http://" + iceBoxIp + ":8081/consumers/" + username + '/deposit',
+          url: "http://" + iceBoxIp + ":8081/consumers/" + encodeURIComponent(username) + '/deposit',
           type: 'POST',
           data: {
             amount: amountx
@@ -385,7 +386,7 @@
           user = 'Anon';
         }
         var call = $.ajax({
-          url: "http://" + iceBoxIp + ":8081/consumptions/" + username,
+          url: "http://" + iceBoxIp + ":8081/consumptions/" + encodeURIComponent(username),
           type: 'POST',
           data: {
             barcode: barcode
@@ -670,7 +671,7 @@
           var username = $('<p><a href="#" class="btn-flat btn-block btn btn-primary" data-code="' + user + '" id="userSelection" role="button">' + user + '</a>')
           username.appendTo(userdiv);
           userdiv.appendTo(row1);
-          console.log(user);
+          console.log("-> "+user);
         }
 
         containerfluid.appendTo('#main');
@@ -734,7 +735,7 @@
         if (!userIsLoggedIn()) {
           $('<li class="nav-item"><a class="nav-link loginLink" href="#" id="loginLink"><span class="glyphicon glyphicon-log-in" aria-hidden="true"> Login </span></a></li>').appendTo('#navbarlist');
         } else {
-          $('<li class="nav-item"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"> ' + username + '<span class="caret"></span></span></a> <ul class="dropdown-menu"><li><a href="#" id="rechargeaccount">Konto Aufladen</a></li><li><a href="#" id="configureaccount">Einstellungen</a></li><li><a href="#" id="logout">Log Out</a></li></ul></li>').appendTo('#navbarlist');
+          $('<li class="nav-item"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"> ' + $('<div/>').text(username).html() + '<span class="caret"></span></span></a> <ul class="dropdown-menu"><li><a href="#" id="rechargeaccount">Konto Aufladen</a></li><li><a href="#" id="configureaccount">Einstellungen</a></li><li><a href="#" id="logout">Log Out</a></li></ul></li>').appendTo('#navbarlist');
         }
       }
 
@@ -754,7 +755,7 @@
             var barcode = drinks[i].barcode;
             var drinkimage = mapDrinkImage(drinkName);
             var drinkDiv = $('<div class="col-sm-12 col-lg-2""></div>');
-            var drinkName = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-drinkselect" data-code="' + barcode + '" id="drinkSelection" role="button"><img src="' + drinkimage + '" height=200px data-code="' + barcode + '" align="center"> </br>' + drinkName + '</a>')
+            var drinkName = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-drinkselect" data-code="' + barcode + '" id="drinkSelection" role="button"><img src="' + drinkimage + '" height=200px data-code="' + barcode + '" align="center"> </br>' + $('<div/>').text(drinkName).html() + '</a>')
             drinkName.appendTo(drinkDiv);
             drinkDiv.appendTo(row1);
             //console.log(drinkName);
