@@ -81,14 +81,20 @@
           renderContent();
         });
         $('#body').on('click', '#submitnewregistration', function (e) {
+          console.log('REGISTER NEW USER!?!?!?');
           var u = $('#inputUsername').val();
           console.log(u);
           registerNewUser(u, function (result) {
-            console.log("result from new user thing..." + result);
-            console.log(result.username);
-            login(result.username);
-            state = state_configureaccount;
-            renderContent();
+            if(result.username == undefined) {
+              state = state_consumerManagement;
+              ready();
+            } else {
+              console.log("result from new user thing..." + result);
+              console.log(result.username);
+              login(result.username);
+              state = state_configureaccount;
+              renderContent();
+            }
           });
         });
         $('#body').on('click', '#submitCorrection', function (e) {
