@@ -674,7 +674,7 @@
         for (var i in consumers) {
           var user = consumers[i].username;
           var userdiv = $('<div class="col-sm-6 col-lg-2"></div>');
-          var username = $('<p><a href="#" class="btn-flat btn-block btn btn-primary" data-code="' + user + '" id="userSelection" role="button">' + $('<div/>').text(user).html() + '</a>')
+          var username = $('<p><a href="#" class="btn-flat btn-block btn btn-primary usernamediv" data-code="' + user + '" id="userSelection" role="button">' + $('<div/>').text(user).html() + '</a>')
           username.appendTo(userdiv);
           userdiv.appendTo(row1);
           console.log("-> "+user);
@@ -870,6 +870,11 @@
         background-image: none;
         border: 0;
       }
+
+      .usernamediv {
+          overflow:  hidden;
+      }
+
       .container {
         width: 30em;
         overflow-x: auto;
