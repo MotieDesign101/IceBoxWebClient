@@ -4,7 +4,7 @@
   "description": "Standard website for IceBox",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node website.js",
     "test": "mocha",
     "startResourceLim": "nodemon --max_old_space_size=400 test.js --production  "
   },
