@@ -30,6 +30,5 @@ bonjour.find({
   });
 
   app.get('/isiceboxdown', function(req, res) {
-    app.use(express.static('./image'));
     res.sendFile(path.join(__dirname + '/reset.html'));
   });
