@@ -14,9 +14,11 @@ bonjour.find({
       });
       app.get('/doreset', function(req, res) {
         console.log("calling reset.");
-        exec('./restart.sh', function(a, b, c) {
-          exec('./restart.sh', function(a, b, c) {
-            res.json({ok: true});
+        exec('/root/restart.sh', function(a, b, c) {
+          console.log("1");
+          exec('/root/restart.sh', function(a, b, c) {
+            console.log("2");
+            res.json({ok: "restart..."});
           });
         });
       });

@@ -79,7 +79,7 @@
         crossDomain: true,
         dataType: 'json',
         success: function (connectionData) {
-          alert("ok, reset has been initiated.");
+          alert("ok, reset has been initiated."+connectionData.ok);
         },
         error: function () {
 
