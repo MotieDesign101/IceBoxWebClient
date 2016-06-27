@@ -20,7 +20,7 @@ bonjour.find({
           });
         });
       });
-      app.listen(8088);
+      app.listen(80);
     }
   });
 
