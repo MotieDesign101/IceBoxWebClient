@@ -15,6 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.13.4",
-    "bonjour": "^3.2.0"
+    "bonjour": "^3.2.0",
+    "exec": "0.1.1"
   }
 }
