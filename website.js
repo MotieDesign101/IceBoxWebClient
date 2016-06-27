@@ -14,8 +14,11 @@ bonjour.find({
       });
       app.get('/doreset', function(req, res) {
         console.log("calling reset.");
-        exec('/root/redeployservice.sh', function(a, b, c) {
+        exec('sudo killall node &', function(a, b, c) {
           console.log("1");
+          exec('systemctl start icebox', function(a, b, c) {
+            console.log("2");
+          });
         });
       });
       app.listen(80);
