@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+  <meta charset="utf-8">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" crossorigin="anonymous" type="text/javascript"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.0/js.cookie.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js" type="text/javascript"></script>
+    <script>
+      //app state
+      var state = null;
+      var state_consumerManagement = 'consumerManagement';
+      var state_drinkselection = 'drinkselection';
+      var state_drinkInventory = 'drinkinventory';
+      var state_rechargeAccount = 'recharceAccount';
+      var state_configureaccount = 'configureaccount';
+
+      var iceBoxIp = 'localhost';
+
+      var username = '';
+
+      var drinks = {};
+      var drink = {};
+      var consumers = {};
+      var consumer = {};
+
+      $(document).ready(function () {
+        console.log("document.ready");
+        ready();
+      });
+
+      function ready() {
+        console.log("ready()");
+        initializeUsernameFromCookie();
+        registerClickHooks();
+        getDataFromServer(function () {
+          login(username);
+          console.log("now reder content");
+          renderContent();
+        });
+
+      }
+
+      function getDataFromServer(callback) {
+        //norm
+        /*
+          getIceBoxIp(function() {
+            getDrinkData(callback);
+          });
+          */
+        //TEMP
+        getDrinkData(callback);
+      }
+
+      function initializeUsernameFromCookie() {
+        console.log("initializeUsernameFromCookie");
+        var cookie = Cookies.get('username');
+        if (!(cookie === undefined || cookie == '')) {
+          username = cookie;
+        }
+      }
+
+      function registerClickHooks() {
+        console.log("registerClickHooks " + state);
+        //unregister all hooks
+        $('#body').off();
+        //reregister
+        $('#body').on('click', '.loginLink', function (e) {
+          console.log("log....");
+          state = state_consumerManagement;
+          renderContent();
+        });
+        $('#body').on('click', '#logout', function (e) {
+          console.log("logout");
+          logout();
+          state = state_drinkselection;
+          renderContent();
+        });
+        $('#body').on('click', '#submitnewregistration', function (e) {
+          var u = $('#inputUsername').val();
+          console.log(u);
+          registerNewUser(u, function (result) {
+            console.log("result from new user thing..." + result);
+            console.log(result.username);
+            login(result.username);
+            state = state_configureaccount;
+            renderContent();
+          });
+        });
+        $('#body').on('click', '#submitCorrection', function (e) {
+          var inputBarcode = drink.barcode;
+          var inputFullPrice = drink.fullprice;
+          if ($('#inputFullPrice').val() == '') {} else {
+            inputFullPrice = parseInt($('#inputFullPrice').val());
+          }
+
+          var inputDiscountprice = drink.discountprice;
+          console.log(inputDiscountprice);
+          if ($('#inputDiscountprice').val() == '') {} else {
+            console.log("discountprice not empty...");
+            inputDiscountprice = parseInt($('#inputDiscountprice').val());
+          }
+
+          var inputQuantity = drink.quantity;
+          if ($('#inputQuantity').val() == '') {} else {
+            inputQuantity = parseInt($('#inputQuantity').val());
+          }
+
+          var inputEmpties = drink.empties;
+          if ($('#inputEmpties').val() == '') {} else {
+            inputEmpties = parseInt($('#inputEmpties').val());
+          }
+
+          correctInventory(inputBarcode, inputFullPrice, inputDiscountprice, inputQuantity, inputEmpties, function (result) {
+            console.log("...");
+          });
+        });
+        $('#body').on('click', '#userSelection', function (e) {
+          console.log('#userSelection');
+          console.log(e.target.dataset.code);
+          login(e.target.dataset.code)
+          state = state_drinkselection;
+          console.log("render from user Selectio");
+          renderContent();
+        });
+        $('#body').on('click', '#drinkConfigure', function (e) {
+          console.log('#drinkConfigure');
+          var barcode = e.target.dataset.code;
+          for (var i = 0 in drinks) {
+            if (drinks[i].barcode == barcode) {
+              drink = drinks[i];
+            }
+          }
+          console.log("render from drink config");
+          renderContent();
+        });
+        $('#body').on('click', '#drinkSelection', function (e) {
+          console.log('#drinkSelection');
+          var barcode = e.target.dataset.code;
+          var drinkName = '';
+          var money = "1,5 €";
+          if (userIsLoggedIn()) {
+            money = "1,25 €";
+          }
+          for (var i = 0 in drinks) {
+            if (drinks[i].barcode == barcode) {
+              drinkName = drinks[i].name;
+            }
+          }
+          var dialog = bootbox.dialog({
+            message: '"' + drinkName + '" für ' + money + ' kaufen?',
+            title: "You sure Bro?",
+            buttons: {
+              success: {
+                label: "Ja",
+                className: "btn-success",
+                callback: function () {
+                  dialog.modal('hide');
+                  buyDrink(e.target.dataset.code);
+                }
+              },
+              danger: {
+                label: "Noooooooooo",
+                className: "btn-danger",
+                callback: function () {}
+              }
+            }
+          });
+        });
+        $('#body').on('click', '#brand', function (e) {
+          console.log('#brand');
+          state = state_drinkselection;
+          console.log("render from brand");
+          renderContent();
+        });
+        $('#body').on('click', '#inventory', function (e) {
+          console.log('#inventory');
+          state = state_drinkInventory;
+          console.log("render from inventory");
+          renderContent();
+        });
+        $('#body').on('click', '#rechargeaccount', function (e) {
+          console.log('#rechargeaccount');
+          state = state_rechargeAccount;
+          console.log("render from recharge...");
+          renderContent();
+        });
+        $('#body').on('click', '.euroSelection', function (e) {
+          console.log(".euroSelection");
+          var dialog = bootbox.dialog({
+            message: 'Hast du das Geld wirklich in die Box gelegt?',
+            title: "Just checkin'",
+            buttons: {
+              success: {
+                label: "Ja",
+                className: "btn-success",
+                callback: function () {
+                  dialog.modal('hide');
+                  var submition = e.target.dataset.code;
+                  rechargeAccount(submition, function () {
+                    console.log("back from recharge... render")
+                    state = state_drinkselection;
+                    ready();
+                  });
+                }
+              },
+              danger: {
+                label: "Nope",
+                className: "btn-danger",
+                callback: function () {}
+              }
+            }
+          });
+        });
+        $('#body').on('click', '#configureaccount', function (e) {
+          console.log("#configureaccount");
+          state = state_configureaccount;
+          renderContent();
+        });
+        $('#body').on('click', '#submitUserdata', function (e) {
+          console.log("#submitUserdata");
+          var vds = $('#inputVds').is(':checked');
+          var avatarmail = $('#inputAvatarmail').val();
+          console.log("--> loltest " + vds + " " + avatarmail);
+          submitUserdata(avatarmail, vds);
+        });
+      }
+
+      function rechargeAccount(submition, callback) {
+        if (submition == '5') {
+          rechargeAccoundWith(500, callback);
+        }
+        if (submition == '10') {
+          rechargeAccoundWith(1000, callback);
+        }
+      }
+
+      function submitUserdata(mail, vdsFlag) {
+        var call = $.ajax({
+          url: "http://" + iceBoxIp + ":8081/consumers/" + username,
+          type: 'PUT',
+          data: {
+            avatarmail: mail,
+            vds: vdsFlag
+          },
+          crossDomain: true,
+          dataType: 'json',
+          success: function (consumer) {
+            console.log("call ready from submit user data...");
+            ready();
+          },
+          error: function (jqXHR, textStatus, error) {}
+        });
+      }
+
+      function rechargeAccoundWith(amountx, callback) {
+        console.log("recharge account " + amountx);
+        var call = $.ajax({
+          url: "http://" + iceBoxIp + ":8081/consumers/" + username + '/deposit',
+          type: 'POST',
+          data: {
+            amount: amountx
+          },
+          crossDomain: true,
+          dataType: 'json',
+          success: function (consumer) {
+            state = state_drinkselection;
+            console.log("call ready from recharge account");
+            callback();
+          },
+          error: function (jqXHR, textStatus, error) {}
+        });
+      }
+
+      function correctInventory(inputBarcode, inputFullPrice, inputDiscountprice, inputQuantity, inputEmpties) {
+        console.log("here we would correct a drink");
+        console.log(inputBarcode + ', ' + inputFullPrice + ', ' + inputDiscountprice + ', ' + inputQuantity + ', ' + inputEmpties);
+        $.ajax({
+          url: "http://" + iceBoxIp + ":8081/drinks/" + inputBarcode,
+          type: 'PUT',
+          data: {
+            barcode: inputBarcode,
+            fullprice: inputFullPrice,
+            discountprice: inputDiscountprice,
+            quantity: inputQuantity,
+            empties: inputEmpties
+          },
+          crossDomain: true,
+          dataType: 'json',
+          success: function (consumer) {
+            ready();
+          },
+          error: function (jqXHR, textStatus, error) {}
+        });
+      }
+
+      function buyDrink(barcode) {
+        var user = username;
+        if (username == '') {
+          user = 'Anon';
+        }
+        var call = $.ajax({
+          url: "http://" + iceBoxIp + ":8081/consumption/" + username,
+          type: 'POST',
+          data: {
+            barcode: barcode
+          },
+          crossDomain: true,
+          dataType: 'json',
+          success: function (consumer) {
+            displaySucesfullBuy();
+
+          },
+          error: function (jqXHR, textStatus, error) {
+            displayNotBought();
+          }
+        });
+      }
+
+      function displayNotBought() {
+        console.log("ololroflcopter");
+        var dialog = bootbox.dialog({message: 'OH NOOOO! SOMETHING WENT WRONG', title: ""});
+        setTimeout(function () {
+          dialog.modal('hide');
+          ready();
+        }, 5000);
+      }
+
+      function displaySucesfullBuy() {
+        console.log("ololroflcopter");
+        var dialog = bootbox.dialog({message: 'Thank You Come again!', title: ""});
+        setTimeout(function () {
+          dialog.modal('hide');
+          ready();
+        }, 2000);
+      }
+
+      function registerNewUser(u, callback) {
+        $.ajax({
+          url: "http://" + iceBoxIp + ":8081/consumers/",
+          type: 'POST',
+          data: {
+            username: u
+          },
+          crossDomain: true,
+          dataType: 'json',
+          success: function (consumer) {
+            callback(consumer);
+          },
+          error: function (jqXHR, textStatus, error) {
+            callback(textStatus);
+          }
+        });
+      }
+
+      function login(u) {
+        username = u;
+        Cookies.set('username', username, {
+          expires: 365,
+          path: '/'
+        });
+        for (var i = 0 in consumers) {
+          if (consumers[i].username == u) {
+            consumer = consumers[i];
+          }
+        }
+      }
+
+      function logout() {
+        Cookies.set('username', '', {
+          expires: 1,
+          path: '/'
+        });
+        username = '';
+        consumer = {};
+      }
+
+      function getIceBoxIp(callback) {
+        console.log("1b");
+        barcodes = [];
+        usernames = [];
+        $.ajax({
+          url: "serviceip",
+          type: 'GET',
+          crossDomain: true,
+          dataType: 'json',
+          success: function (connectionData) {
+            iceBoxIp = connectionData.ip;
+            if (iceBoxIp == '::') {
+              iceBoxIp = 'localhost';
+            }
+            callback();
+          },
+          error: function () {
+            console.log("fail.");
+          }
+        });
+      }
+
+      function getDrinkData(callback) {
+        console.log("3");
+        $.ajax({
+          url: "http://" + iceBoxIp + ":8081/drinks",
+          type: 'GET',
+          crossDomain: true,
+          dataType: 'json',
+          success: function (drinksData) {
+            drinks = drinksData;
+            getUserData(callback);
+          },
+          error: function () {
+            console.log("fail.");
+          }
+        });
+      }
+
+      function getUserData(callback) {
+        console.log("4");
+        $.ajax({
+          url: "http://" + iceBoxIp + ":8081/consumers",
+          type: 'GET',
+          crossDomain: true,
+          dataType: 'json',
+          success: function (consumersData) {
+            consumers = consumersData;
+            callback();
+          },
+          error: function () {
+            console.log("fail.");
+          }
+        });
+      }
+
+      function renderContent() {
+        console.log("render");
+        $('#body').empty();
+        renderNavbar();
+        addMain();
+        if (state === null) {
+          state = state_drinkselection;
+        }
+        if (state === state_consumerManagement) {
+          renderUserChoice();
+          renderNewUserRegistrationForm();
+        }
+        if (state === state_drinkselection) {
+          renderDrinkSelection();
+        }
+        if (state === state_drinkInventory) {
+          renderInventory();
+        }
+        if (state === state_rechargeAccount) {
+          renderRechargeAccount();
+        }
+        if (state === state_configureaccount) {
+          renderConfigureAccount();
+        }
+      }
+
+      function renderConfigureAccount() {
+        var containerfluid = $('<div class="container-fluid" id="inventoryform"></div>');
+        var desc = $('<p class="lead">Einstellungen für ' + username + '</p>')
+        desc.appendTo(containerfluid);
+
+        var row = $('<div class="row"></div>');
+        var registerForm = $('<form class="form-horizontal" role="form">');
+        row.appendTo(registerForm);
+
+        var avatarmail = consumer.avatarmail;
+        if (avatarmail == null) {
+          avatarmail = '';
+        }
+
+        var checked = ''
+        if (consumer.vds) {
+          console.log("checked...");
+          checked = 'checked="checked"';
+        }
+
+        $('<div class="col-sm-6 col-lg-4"><div class="form-group"><label for="inputAvatarmail" class="col-md-4 control-label">Avatar Mail</label><div class="col-md-8"><input type="text" class="form-control" id="inputAvatarmail" value = "' + avatarmail + '" placeholder="' + avatarmail + '"></div></div></div>').appendTo(row);
+        $("#inputAvatarmail").val(avatarmail);
+        $('<div class="col-sm-6 col-lg-4"><div class="form-group"><label for="inputVds" class="col-md-4 control-label">Daten Loggen</label><div class="col-md-8"><input type="checkbox" class="form-control" id="inputVds" ' + checked + '></div></div></div>').appendTo(row);
+
+        $('<div class="col-sm-12 col-lg-4"><button type="submit" class="btn btn-default" id="submitUserdata">Korrigieren</button></div>').appendTo(row);
+
+        registerForm.appendTo(containerfluid);
+        containerfluid.appendTo('#main');
+      }
+
+      function renderRechargeAccount() {
+        console.log("recharge....");
+        var containerfluid = $('<div class="container-fluid"></div>');
+        var row = $('<div class="row"></div>');
+
+        var euroDiv = $('<div class="col-sm-12 col-lg-12""></div>');
+        var eurofive = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-moneyselect euroSelection" data-code="5" role="button"><img src="euro5.jpg" height=200px data-code="5" align="center"></a>');
+        var euroten = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-moneyselect euroSelection" data-code="10" role="button"><img src="euro10.jpg" height=200px data-code="10" align="center"></a>');
+
+        eurofive.appendTo(euroDiv);
+        euroten.appendTo(euroDiv);
+        euroDiv.appendTo(row);
+
+        row.appendTo(containerfluid);
+        containerfluid.appendTo('#main');
+      }
+
+      function renderInventory() {
+        //console.log(JSON.stringify(drink));
+        for (var i = 0 in drinks) {
+          if (Object.keys(drink).length === 0) {
+            console.log("WE SELECT AN ACTIVE DRINK BECAUSE NONE WAS SELECTED");
+            drink = drinks[i];
+            //console.log(JSON.stringify(drink));
+          } else {
+            //TODO: Update drinkdata, to see the new numbers after pressing the button
+            if (drinks[i].barcode == drink.barcode) {
+              drink = drinks[i];
+            }
+          }
+        }
+        //console.log(JSON.stringify(drink));
+        var containerfluid = $('<div class="container-fluid" id="inventoryform"></div>');
+        var desc = $('<p class="lead">Getränkeinventur für ' + drink.name + ':</p>')
+        desc.appendTo(containerfluid);
+
+        var row0 = $('<div class="row"></div>');
+        var registerForm = $('<form class="form-horizontal" role="form">');
+        row0.appendTo(registerForm);
+
+        $('<div class="col-sm-6 col-lg-4"><div class="form-group"><label for="inputBarcode" class="col-md-4 control-label">Barcode:</label><div class="col-md-8"><input type="text" readonly class="form-control" id="inputBarcode" placeholder="' + drink.barcode + '"></div></div></div>').appendTo(row0);
+        $('<div class="col-sm-6 col-lg-4"><div class="form-group"><label for="inputFullPrice" class="col-md-4 control-label">Preis:</label><div class="col-md-8"><input type="text" class="form-control" id="inputFullPrice" placeholder="' + drink.fullprice + '"></div></div></div>').appendTo(row0);
+        $('<div class="col-sm-6 col-lg-4"><div class="form-group"><label for="inputDiscountprice" class="col-md-4 control-label">Reduzierter Preis:</label><div class="col-md-8"><input type="text" class="form-control" id="inputDiscountprice" placeholder="' + drink.discountprice + '"></div></div></div>').appendTo(row0);
+        $('<div class="col-sm-6 col-lg-4"><div class="form-group"><label for="inputQuantity" class="col-md-4 control-label">Anzahl:</label><div class="col-md-8"><input type="text" class="form-control" id="inputQuantity" placeholder="' + drink.quantity + '"></div></div></div>').appendTo(row0);
+        $('<div class="col-sm-6 col-lg-4"><div class="form-group"><label for="inputEmpties" class="col-md-4 control-label">Leergut:</label><div class="col-md-8"><input type="text" class="form-control" id="inputEmpties" placeholder="' + drink.empties + '"></div></div></div>').appendTo(row0);
+
+        $('<div class="col-sm-12 col-lg-4"><button type="submit" class="btn btn-default" id="submitCorrection">Korrigieren</button></div>').appendTo(row0);
+
+        registerForm.appendTo(containerfluid);
+        containerfluid.appendTo('#main');
+
+        var row1 = $('<div class="row"></div>');
+        for (var i = 0 in drinks) {
+          console.log(drink.name);
+          console.log(drink.barcode);
+          if (drinks[i].barcode == drink.barcode) {
+            console.log(drink.name);
+            addClass = 'active';
+          } else {
+            addClass = '';
+          }
+          var drinkName = drinks[i].name;
+          var barcode = drinks[i].barcode;
+          var drinkimage = mapDrinkImage(drinkName);
+          var drinkDiv = $('<div class="col-sm-6 col-lg-2""></div>');
+          var drinkName = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-drinkselect ' + addClass + '" data-code="' + barcode + '" id="drinkConfigure" role="button"><img src="' + drinkimage + '" height=200px data-code="' + barcode + '" align="center"> </br>' + drinkName + '</a>')
+          drinkName.appendTo(drinkDiv);
+          drinkDiv.appendTo(row1);
+          console.log(drinkName);
+        }
+        row1.appendTo('#main');
+      }
+
+      function renderUserChoice() {
+        console.log("render user choice.")
+        var containerfluid = $('<div class="container-fluid"></div>');
+        var row1 = $('<div class="row"></div>');
+        row1.appendTo(containerfluid);
+
+        for (var i in consumers) {
+          var user = consumers[i].username;
+          var userdiv = $('<div class="col-sm-6 col-lg-2"></div>');
+          var username = $('<p><a href="#" class="btn-flat btn-block btn btn-primary" data-code="' + user + '" id="userSelection" role="button">' + user + '</a>')
+          username.appendTo(userdiv);
+          userdiv.appendTo(row1);
+          console.log(user);
+        }
+
+        containerfluid.appendTo('#main');
+
+      }
+
+      function renderNewUserRegistrationForm() {
+        var containerfluid = $('<div class="container-fluid" id="registrationform"></div>');
+        var desc = $('<p class="lead">Als neuer User Registrieren:</p>')
+        desc.appendTo(containerfluid);
+
+        var row1 = $('<div class="row"></div>');
+        var registerForm = $('<form class="form-horizontal" role="form">');
+        row1.appendTo(registerForm);
+
+        $('<div class="col-sm-6 col-lg-4"><div class="form-group"><label for="inputUsername" class="col-md-4 control-label">Username:</label><div class="col-md-8"><input type="text" class="form-control" id="inputUsername" placeholder="Username"></div></div></di' +
+            'v>').appendTo(row1);
+        $('<div class="col-sm-12 col-lg-4"><button type="submit" class="btn btn-default" id="submitnewregistration">Registrieren</button></div>').appendTo(row1);
+
+        registerForm.appendTo(containerfluid);
+
+        containerfluid.appendTo('#main');
+      }
+
+      function renderNavbar() {
+        console.log("render Navbar");
+        var navbar = $('<nav class="navbar navbar-default"></nav>');
+        var containerfluid = $('<div class="container-fluid"></div>');
+        containerfluid.appendTo(navbar);
+        var navheader = $('<div class="navbar-header"></div>');
+        navheader.appendTo(containerfluid);
+        var collapsebutton = $('<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar1" aria-expanded="false"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"' +
+            '></span></button>');
+        collapsebutton.appendTo(navheader);
+        var brand = $('<a class="navbar-brand" href="#" id="brand">IceBox</a>');
+        brand.appendTo(navheader);
+
+        var navbar1 = $('<div class="collapse navbar-collapse" id="navbar1"></div>');
+        navbar1.appendTo(containerfluid);
+        var navbarlist = $('<ul class="nav navbar-nav" id="navbarlist"></ul>');
+        navbarlist.appendTo(navbar1);
+
+        var inventurLink = $('<li><a href="#" id="inventory">Inventur</a></li>');
+        inventurLink.appendTo(navbarlist);
+
+        navbar.appendTo('#body');
+        renderLoginButton();
+        renderLedger();
+      }
+
+      function userIsLoggedIn() {
+        return !username == '';
+      }
+
+      function renderLoginButton() {
+        console.log("renderLoginButton");
+        if (!userIsLoggedIn()) {
+          $('<li class="nav-item"><a class="nav-link loginLink" href="#" id="loginLink"><span class="glyphicon glyphicon-log-in" aria-hidden="true"> Login </span></a></li>').appendTo('#navbarlist');
+        } else {
+          $('<li class="nav-item"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"> ' + username + '<span class="caret"></span></span></a> <ul class="dropdown-menu"><li><a href="#" id="rechargeaccount">Konto Aufladen</a></li><li><a href="#" id="configureaccount">Einstellungen</a></li><li><a href="#" id="logout">Log Out</a></li></ul></li>').appendTo('#navbarlist');
+        }
+      }
+
+      function renderLedger() {
+        var euro = amountInEuro(consumer.ledger);
+        if (userIsLoggedIn()) {
+          $('<li class="nav-item"><p class="navbar-text"><span class="glyphicon glyphicon-euro" aria-hidden="true"> ' + euro + ' </span></p></li>').appendTo('#navbarlist');
+        }
+      }
+
+      function renderDrinkSelection() {
+        console.log("render drinks");
+        var row1 = $('<div class="row"></div>');
+        for (var i = 0 in drinks) {
+          if (drinks[i].quantity > 0) {
+            var drinkName = drinks[i].name;
+            var barcode = drinks[i].barcode;
+            var drinkimage = mapDrinkImage(drinkName);
+            var drinkDiv = $('<div class="col-sm-6 col-lg-2""></div>');
+            var drinkName = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-drinkselect" data-code="' + barcode + '" id="drinkSelection" role="button"><img src="' + drinkimage + '" height=200px data-code="' + barcode + '" align="center"> </br>' + drinkName + '</a>')
+            drinkName.appendTo(drinkDiv);
+            drinkDiv.appendTo(row1);
+            //console.log(drinkName);
+          }
+        }
+        row1.appendTo('#body');
+      }
+
+      function mapDrinkImage(drinkName) {
+        if (drinkName == "Club Mate") {
+          return "mate400px.png";
+        }
+        if (drinkName == "flora power") {
+          return "florapower400px.png";
+        }
+        if (drinkName == "fritz-kola Kaffee") {
+          return "fritzkaffee400px.png";
+        }
+        if (drinkName == "Müllers Malz") {
+          return "malz400px.png"
+        }
+        if (drinkName == "Premium Cola (0.5l)") {
+          return "premiumcola400px.png"
+        }
+        if (drinkName == "Wostok Tanne (0.3l)") {
+          return "wostoktanne400px.png";
+        }
+        if (drinkName == "Mio Mate") {
+          return "miomio400px.png";
+        }
+        if (drinkName == "fritz-limo Zitrone") {
+          return "fritzzitrone400px.png";
+        }
+        if (drinkName == "Wostok Dattel (0.5l)") {
+          return "wostokdatel400px.png";
+        }
+        if (drinkName == "Wostok Birne (0.3l)") {
+          return "wostokbirne400px.png";
+        }
+        if (drinkName == "fritz-limo Orange") {
+          return "fritzorange400px.png";
+        }
+        if (drinkName == "Wostok Aprikose (0.3l)") {
+          return "wostokaprikose400px.png";
+        }
+        if (drinkName == "Paulaner Hefe") {
+          return "paulaner400px.png";
+        }
+        if (drinkName == "viva con Agua laut") {
+          return "vivalaut400px.png";
+        }
+        if (drinkName == "viva con Agua leise") {
+          return "vivaleise400px.png";
+        }
+        return "bottle.png";
+      }
+
+      function addMain() {
+        var main = $('<div id="main"></div>');
+        main.appendTo("#body");
+      }
+
+      function amountInEuro(amount) {
+        return (amount / 100).toFixed(2);
+      }
+    </script>
+    <style>
+
+      #registrationform {
+        border-top: 1px solid #c6c6c6;
+      }
+
+      #inventoryform {
+        border-bottom: 1px solid #c6c6c6;
+        margin-bottom: 20px;
+      }
+
+      .btn-moneyselect {
+        background-color: #ffffff;
+      }
+
+      .btn-drinkselect {
+        background-color: #c6c6c6;
+      }
+
+      .btn-flat {
+        filter:progid:DXImageTransform.Microsoft.Gradient(enabled='false');
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+        background-image: none;
+        border: 0;
+      }
+      .container {
+        width: 30em;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+      }
+
+    </style>
+  </head>
+  <body id="body"></html>

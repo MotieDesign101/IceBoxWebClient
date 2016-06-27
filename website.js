@@ -14,12 +14,8 @@ bonjour.find({
       });
       app.get('/doreset', function(req, res) {
         console.log("calling reset.");
-        exec('/root/restart.sh &', function(a, b, c) {
+        exec('/root/redeployservice.sh', function(a, b, c) {
           console.log("1");
-          exec('/root/restart.sh &', function(a, b, c) {
-            console.log("2");
-            res.json({ok: "restart..."});
-          });
         });
       });
       app.listen(80);
