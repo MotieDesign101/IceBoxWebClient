@@ -186,7 +186,7 @@
         $('#body').on('click', '#drinkConfigure', function (e) {
           console.log('#drinkConfigure');
           var barcode = e.target.dataset.code;
-          for (var i = 0 in drinks) {
+          for (var i in drinks) {
             if (drinks[i].barcode == barcode) {
               drink = drinks[i];
             }
@@ -278,7 +278,7 @@
         if (userIsLoggedIn()) {
           money = "1,25 €";
         }
-        for (var i = 0 in drinks) {
+        for (var i in drinks) {
           if (drinks[i].barcode == barcode) {
             drinkName = drinks[i].name;
           }
@@ -448,7 +448,7 @@
           expires: 365,
           path: '/'
         });
-        for (var i = 0 in consumers) {
+        for (var i in consumers) {
           if (consumers[i].username == u) {
             consumer = consumers[i];
           }
@@ -477,8 +477,9 @@
             }
             callback();
           },
-          error: function () {
+          error: function (error) {
             console.log("fail.");
+            console.log(error);
           }
         });
       }
@@ -591,7 +592,7 @@
 
       function renderInventory() {
         //console.log(JSON.stringify(drink));
-        for (var i = 0 in drinks) {
+        for (var i in drinks) {
           if (Object.keys(drink).length === 0) {
             console.log("WE SELECT AN ACTIVE DRINK BECAUSE NONE WAS SELECTED");
             drink = drinks[i];
@@ -624,7 +625,7 @@
         containerfluid.appendTo('#main');
 
         var row1 = $('<div class="row"></div>');
-        for (var i = 0 in drinks) {
+        for (var i in drinks) {
           console.log(drink.name);
           console.log(drink.barcode);
           if (drinks[i].barcode == drink.barcode) {
@@ -755,7 +756,7 @@
       function renderDrinkSelection() {
         console.log("render drinks");
         var row1 = $('<div class="row"></div>');
-        for (var i = 0 in drinks) {
+        for (var i in drinks) {
           if (drinks[i].quantity > 0) {
             var drinkName = drinks[i].name;
             var barcode = drinks[i].barcode;
@@ -836,6 +837,9 @@
         }
         if (drinkName == "Spezi (0.5l)") {
           return "spezi400px.png";
+        }
+        if (drinkName == "Fritz-kola zuckerfrei") {
+          return "fritzlight400px.png";
         }
         return "bottle.png";
       }

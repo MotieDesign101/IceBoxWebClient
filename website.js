@@ -1,8 +1,15 @@
 var express = require('express');
 var app = express();
 var path = require('path');
+var cors = require('cors');
 var bonjour = require('bonjour')();
 var exec = require('exec');
+
+cors({
+  credentials: true,
+  origin: true
+});
+app.use(cors()); // Support cross orgin requests
 
 bonjour.find({
     type: 'http'
@@ -14,10 +21,9 @@ bonjour.find({
       });
       app.get('/doreset', function(req, res) {
         console.log("calling reset.");
-        exec('sudo killall node &', function(a, b, c) {
-          console.log("1");
-          exec('systemctl start icebox', function(a, b, c) {
-            console.log("2");
+        exec('./restart.sh', function(a, b, c) {
+          exec('./restart.sh', function(a, b, c) {
+            res.json({ok: true});
           });
         });
       });
