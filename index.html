@@ -274,17 +274,18 @@
 
       function drinkSelection(barcode, callback) {
         var drinkName = '';
-        var money = "1,5 €";
-        if (userIsLoggedIn()) {
-          money = "1,25 €";
-        }
+        var money = 1.5;
         for (var i in drinks) {
           if (drinks[i].barcode == barcode) {
             drinkName = drinks[i].name;
+            money = (drinks[i].fullprice/ 100).toFixed(2);
+            if (userIsLoggedIn()) {
+              money = (drinks[i].discountprice/ 100).toFixed(2);
+            }
           }
         }
         var dialog = bootbox.dialog({
-          message: '"' + drinkName + '" für ' + money + ' kaufen?',
+          message: '"' + drinkName + '" für ' + money + ' € kaufen?',
           title: "You sure Bro?",
           buttons: {
             success: {
