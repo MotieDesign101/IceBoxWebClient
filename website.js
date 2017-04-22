@@ -27,7 +27,7 @@ bonjour.find({
           });
         });
       });
-      app.listen(8089);
+      app.listen(80);
     }
   });
 
