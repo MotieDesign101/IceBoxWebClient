@@ -23,6 +23,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.0/js.cookie.min.js" integrity="sha384-2otITBOo1GkcAj9O3wkimf065kUl1TfnkaBUuCjezaxYw50Z3Nypi7Vs2BBp6sMN" crossorigin="anonymous" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js" integrity="sha384-Nk2l95f1t/58dCc4FTWQZoXfrOoI2DkcpUvgbLk26lL64Yx3DeBbeftGruSisV3a" crossorigin="anonymous" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.5.0/js/md5.min.js" integrity="sha384-KvaiByOhy9dgJmhHzSFf+JlEw9KMmSEsvfpdq50Cjtf9oVZExQk8D6IqHCMFQgK9" crossorigin="anonymous" type="text/javascript"></script>
 
     <script type="text/javascript">
 
@@ -754,6 +755,16 @@
         console.log("renderLoginButton");
         if (!userIsLoggedIn()) {
           $('<li class="nav-item"><a class="nav-link loginLink" href="#" id="loginLink"><span class="glyphicon glyphicon-log-in" aria-hidden="true"> Login </span></a></li>').appendTo('#navbarlist');
+        } else if(!(avatarmail == "")) {
+          $('.glyphicon-avatar::before').css({
+            'display': 'inline-block',
+            'height': '16px',
+            'min-height': '16px',
+            'width': '16px',
+            'min-width': '16px',
+            'background-image': 'url(https://www.gravatar.com/avatar/'+md5(avatarmail.toLowerCase())+'?s=16&d=mm&r=g)'
+          });
+          $('<li class="nav-item"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-avatar" aria-hidden="true"> ' + $('<div/>').text(username).html() + '<span class="caret"></span></span></a> <ul class="dropdown-menu"><li><a href="#" id="rechargeaccount">Konto aufladen</a></li><li><a href="#" id="configureaccount">Einstellungen</a></li><li><a href="#" id="logout">Log out</a></li></ul></li>').appendTo('#navbarlist');
         } else {
           $('<li class="nav-item"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"> ' + $('<div/>').text(username).html() + '<span class="caret"></span></span></a> <ul class="dropdown-menu"><li><a href="#" id="rechargeaccount">Konto aufladen</a></li><li><a href="#" id="configureaccount">Einstellungen</a></li><li><a href="#" id="logout">Log out</a></li></ul></li>').appendTo('#navbarlist');
         }
