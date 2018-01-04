@@ -755,7 +755,7 @@
         if (!userIsLoggedIn()) {
           $('<li class="nav-item"><a class="nav-link loginLink" href="#" id="loginLink"><span class="glyphicon glyphicon-log-in" aria-hidden="true"> Login </span></a></li>').appendTo('#navbarlist');
         } else {
-          $('<li class="nav-item"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"> ' + $('<div/>').text(username).html() + '<span class="caret"></span></span></a> <ul class="dropdown-menu"><li><a href="#" id="rechargeaccount">Konto Aufladen</a></li><li><a href="#" id="configureaccount">Einstellungen</a></li><li><a href="#" id="logout">Log Out</a></li></ul></li>').appendTo('#navbarlist');
+          $('<li class="nav-item"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"> ' + $('<div/>').text(username).html() + '<span class="caret"></span></span></a> <ul class="dropdown-menu"><li><a href="#" id="rechargeaccount">Konto aufladen</a></li><li><a href="#" id="configureaccount">Einstellungen</a></li><li><a href="#" id="logout">Log out</a></li></ul></li>').appendTo('#navbarlist');
         }
       }
 
