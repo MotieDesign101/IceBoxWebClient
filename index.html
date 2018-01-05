@@ -529,6 +529,10 @@
         });
       }
 
+      function getAvatarURI(avatarmail) {
+        return 'https://www.gravatar.com/avatar/'+md5(avatarmail.toLowerCase())+'?s=16&d=mm&r=g';
+      }
+
       function renderContent() {
         console.log("render");
         $('#body').empty();
@@ -762,7 +766,7 @@
             'min-height': '16px',
             'width': '16px',
             'min-width': '16px',
-            'background-image': 'url(https://www.gravatar.com/avatar/'+md5(avatarmail.toLowerCase())+'?s=16&d=mm&r=g)'
+            'background-image': 'url('+getAvatarURI(avatarmail)+')'
           });
           $('<li class="nav-item"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-avatar" aria-hidden="true"> ' + $('<div/>').text(username).html() + '<span class="caret"></span></span></a> <ul class="dropdown-menu"><li><a href="#" id="rechargeaccount">Konto aufladen</a></li><li><a href="#" id="configureaccount">Einstellungen</a></li><li><a href="#" id="logout">Log out</a></li></ul></li>').appendTo('#navbarlist');
         } else {
