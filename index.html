@@ -2,24 +2,24 @@
 <html lang="en">
   <meta charset="utf-8">
 
-  <link rel=“dns-prefetch“ href=“//maxcdn.bootstrapcdn.com“>
   <link rel=“dns-prefetch“ href=“//ajax.googleapis.co“>
+  <link rel=“dns-prefetch“ href=“//maxcdn.bootstrapcdn.com“>
   <link rel=“dns-prefetch“ href=“//cdnjs.cloudflare.co“>
   <link rel=“dns-prefetch“ href=“//www.gravatar.com“>
 
-  <link rel=“preconnect“ href=“//maxcdn.bootstrapcdn.com“>
   <link rel=“preconnect“ href=“//ajax.googleapis.co“>
+  <link rel=“preconnect“ href=“//maxcdn.bootstrapcdn.com“>
   <link rel=“preconnect“ href=“//cdnjs.cloudflare.co“>
 
   <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" integrity="sha384-6ePHh72Rl3hKio4HiJ841psfsRJveeS+aLoaEf3BWfS+gTF0XdAqku2ka8VddikM" crossorigin="anonymous" type="text/javascript"></script>
+
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous" type="text/javascript"></script>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" integrity="sha384-6ePHh72Rl3hKio4HiJ841psfsRJveeS+aLoaEf3BWfS+gTF0XdAqku2ka8VddikM" crossorigin="anonymous" type="text/javascript"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.0/js.cookie.min.js" integrity="sha384-2otITBOo1GkcAj9O3wkimf065kUl1TfnkaBUuCjezaxYw50Z3Nypi7Vs2BBp6sMN" crossorigin="anonymous" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js" integrity="sha384-Nk2l95f1t/58dCc4FTWQZoXfrOoI2DkcpUvgbLk26lL64Yx3DeBbeftGruSisV3a" crossorigin="anonymous" type="text/javascript"></script>
@@ -38,6 +38,7 @@
       var iceBoxIp = 'localhost';
 
       var username = '';
+      var avatarmail = '';
 
       var drinks = {};
       var drink = {};
@@ -463,6 +464,7 @@
         for (var i in consumers) {
           if (consumers[i].username == u) {
             consumer = consumers[i];
+            avatarmail = consumer['avatarmail'];
           }
         }
       }
@@ -530,6 +532,9 @@
       }
 
       function getAvatarURI(avatarmail) {
+        if(avatarmail === null) {
+          avatarmail = '';
+        }
         return 'https://www.gravatar.com/avatar/'+md5(avatarmail.toLowerCase())+'?s=16&d=mm&r=g';
       }
 
