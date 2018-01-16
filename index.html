@@ -1,21 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
   <meta charset="utf-8">
-  <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" crossorigin="anonymous" type="text/javascript"></script>
 
+  <link rel=“dns-prefetch“ href=“//maxcdn.bootstrapcdn.com“>
+  <link rel=“dns-prefetch“ href=“//ajax.googleapis.co“>
+  <link rel=“dns-prefetch“ href=“//cdnjs.cloudflare.co“>
+  <link rel=“dns-prefetch“ href=“//www.gravatar.com“>
+
+  <link rel=“preconnect“ href=“//maxcdn.bootstrapcdn.com“>
+  <link rel=“preconnect“ href=“//ajax.googleapis.co“>
+  <link rel=“preconnect“ href=“//cdnjs.cloudflare.co“>
+
+  <head>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
     <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous" type="text/javascript"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.0/js.cookie.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js" type="text/javascript"></script>
-    <script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" integrity="sha384-6ePHh72Rl3hKio4HiJ841psfsRJveeS+aLoaEf3BWfS+gTF0XdAqku2ka8VddikM" crossorigin="anonymous" type="text/javascript"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.0/js.cookie.min.js" integrity="sha384-2otITBOo1GkcAj9O3wkimf065kUl1TfnkaBUuCjezaxYw50Z3Nypi7Vs2BBp6sMN" crossorigin="anonymous" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js" integrity="sha384-Nk2l95f1t/58dCc4FTWQZoXfrOoI2DkcpUvgbLk26lL64Yx3DeBbeftGruSisV3a" crossorigin="anonymous" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.5.0/js/md5.min.js" integrity="sha384-KvaiByOhy9dgJmhHzSFf+JlEw9KMmSEsvfpdq50Cjtf9oVZExQk8D6IqHCMFQgK9" crossorigin="anonymous" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
       //app state
       var state = null;
       var state_consumerManagement = 'consumerManagement';
@@ -518,6 +529,10 @@
         });
       }
 
+      function getAvatarURI(avatarmail) {
+        return 'https://www.gravatar.com/avatar/'+md5(avatarmail.toLowerCase())+'?s=16&d=mm&r=g';
+      }
+
       function renderContent() {
         console.log("render");
         $('#body').empty();
@@ -677,15 +692,19 @@
 
         for (var i in consumers) {
           var user = consumers[i].username;
+          var avatar = consumers[i].avatarmail;
           var userdiv = $('<div class="col-sm-6 col-lg-2"></div>');
           var username = $('<p><a href="#" class="btn-flat btn-block btn btn-primary usernamediv" data-code="' + user + '" id="userSelection" role="button">' + $('<div/>').text(user).html() + '</a>')
+          if(!(avatar == '')) {
+            var userava = $('<img src="'+getAvatarURI(avatar)+'" width="16" height="16"/>');
+            userava.appendTo(userdiv);
+          }}
           username.appendTo(userdiv);
           userdiv.appendTo(row1);
           console.log("-> "+user);
         }
 
         containerfluid.appendTo('#main');
-
       }
 
       function renderNewUserRegistrationForm() {
@@ -744,8 +763,18 @@
         console.log("renderLoginButton");
         if (!userIsLoggedIn()) {
           $('<li class="nav-item"><a class="nav-link loginLink" href="#" id="loginLink"><span class="glyphicon glyphicon-log-in" aria-hidden="true"> Login </span></a></li>').appendTo('#navbarlist');
+        } else if(!(avatarmail == "")) {
+          $('.glyphicon-avatar::before').css({
+            'display': 'inline-block',
+            'height': '16px',
+            'min-height': '16px',
+            'width': '16px',
+            'min-width': '16px',
+            'background-image': 'url('+getAvatarURI(avatarmail)+')'
+          });
+          $('<li class="nav-item"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-avatar" aria-hidden="true"> ' + $('<div/>').text(username).html() + '<span class="caret"></span></span></a> <ul class="dropdown-menu"><li><a href="#" id="rechargeaccount">Konto aufladen</a></li><li><a href="#" id="configureaccount">Einstellungen</a></li><li><a href="#" id="logout">Log out</a></li></ul></li>').appendTo('#navbarlist');
         } else {
-          $('<li class="nav-item"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"> ' + $('<div/>').text(username).html() + '<span class="caret"></span></span></a> <ul class="dropdown-menu"><li><a href="#" id="rechargeaccount">Konto Aufladen</a></li><li><a href="#" id="configureaccount">Einstellungen</a></li><li><a href="#" id="logout">Log Out</a></li></ul></li>').appendTo('#navbarlist');
+          $('<li class="nav-item"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"> ' + $('<div/>').text(username).html() + '<span class="caret"></span></span></a> <ul class="dropdown-menu"><li><a href="#" id="rechargeaccount">Konto aufladen</a></li><li><a href="#" id="configureaccount">Einstellungen</a></li><li><a href="#" id="logout">Log out</a></li></ul></li>').appendTo('#navbarlist');
         }
       }
 
@@ -915,6 +944,7 @@
       function amountInEuro(amount) {
         return (amount / 100).toFixed(2);
       }
+
     </script>
     <style>
 
@@ -964,4 +994,7 @@
 
     </style>
   </head>
-  <body id="body"></html>
+  <body id="body">
+    <noscript>This Icebox heavily relies on JavaScript. You might benefit from enabling it in your browser.</noscript>
+  </body>
+</html>
