@@ -605,6 +605,9 @@
         euroDiv.appendTo(row);
 
         row.appendTo(containerfluid);
+
+        $('<p><i>Es wird darauf hingewiesen, das nach Beschluss des Vereins, Guthaben, welches länger als ein Jahr nicht genutzt wurde verfallen kann.</i></p>').appendTo(containerfluid);
+
         containerfluid.appendTo('#main');
       }
 
@@ -719,6 +722,7 @@
         $('<div class="col-sm-6 col-lg-4"><div class="form-group"><label for="inputUsername" class="col-md-4 control-label">Username:</label><div class="col-md-8"><input type="text" class="form-control" id="inputUsername" placeholder="Username"></div></div></di' +
             'v>').appendTo(row1);
         $('<div class="col-sm-12 col-lg-4"><button type="submit" class="btn btn-default" id="submitnewregistration">Registrieren</button></div>').appendTo(row1);
+        $('<p><i>Es wird darauf hingewiesen, das nach Beschluss des Vereins, Guthaben, welches länger als ein Jahr nicht genutzt wurde verfallen kann.</i></p>').appendTo(row1);
 
         registerForm.appendTo(containerfluid);
 
@@ -927,11 +931,29 @@
         if (drinkName == "Alnatura Tafel (Pfefferminz)") {
           return "alnaturapfefferminz400.png";
         }
+        if (drinkName == "Alnatura Tafel (Nougat)") {
+          return "alnaturanougat400.png";
+        }
         if (drinkName == "Fair Vollmilch") {
           return "fairvoll400.png";
         }
         if (drinkName == "Maggi Dose") {
           return "maggidose400.png";
+        }
+        if (drinkName == "Haribo") {
+          return "haribo400.png";
+        }
+        if (drinkName == "Quittig Apfelschorle") {
+          return "quittig400.png";
+        }
+        if (drinkName == "Roulette") {
+          return "roulette400.png";
+        }
+        if (drinkName == "morle Schorle") {
+          return "morleschorle400.png";
+        }
+        if (drinkName == "Bionade Holunder") {
+          return "bionadehol400.png";
         }
         return "bottle.png";
       }
