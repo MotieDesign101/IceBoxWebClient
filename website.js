@@ -27,7 +27,7 @@ bonjour.find(
           });
         });
       });
-      app.listen(80);
+      app.listen(process.env.ICEBOX_WEB_PORT || 80);
     }
   });
 
