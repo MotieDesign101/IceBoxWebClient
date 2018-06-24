@@ -34,12 +34,12 @@ bonjour.find(
 app.get(
   '/',
   function(req, res) {
-    app.use(express.static('./image'));
-    res.sendFile(path.join(__dirname + '/index.html'));
+    app.use(express.static(__dirname + '/static/image'));
+    res.sendFile(path.join(__dirname + '/static/index.html'));
   });
 
 app.get(
   '/isiceboxdown',
   function(req, res) {
-    res.sendFile(path.join(__dirname + '/reset.html'));
+    res.sendFile(path.join(__dirname + '/static/reset.html'));
   });
