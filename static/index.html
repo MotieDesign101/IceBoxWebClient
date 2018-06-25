@@ -492,7 +492,7 @@
             callback();
           },
           error: function (error) {
-            console.log("fail.");
+            console.log("Failed to retrieve the Service IP from Icebox API");
             throw error;
           }
         });
@@ -509,7 +509,7 @@
             getUserData(callback);
           },
           error: function () {
-            console.log("fail.");
+            console.log("Failed to retrieve the list of drinks from Icebox API");
           }
         });
       }
@@ -526,7 +526,7 @@
             callback();
           },
           error: function () {
-            console.log("fail.");
+            console.log("Failed to retrieve the list of consumers from the Icebox API");
           }
         });
       }
