@@ -27,7 +27,6 @@ bonjour.find(
           });
         });
       });
-      app.listen(process.env.ICEBOX_WEB_PORT || 80);
     }
   });
 
@@ -43,3 +42,6 @@ app.get(
   function(req, res) {
     res.sendFile(path.join(__dirname + '/static/reset.html'));
   });
+
+console.log("starting to server on port " + (process.env.ICEBOX_WEB_PORT || 80));
+app.listen(process.env.ICEBOX_WEB_PORT || 80);
