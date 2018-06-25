@@ -9,7 +9,7 @@ cors({
   credentials: true,
   origin: true
 });
-app.use(cors()); // Support cross orgin requests
+app.use(cors()); // Support cross origin requests
 
 bonjour.find(
   { type: 'http' },
