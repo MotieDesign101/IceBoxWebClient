@@ -14,7 +14,7 @@ app.use(cors()); // Support cross origin requests
 bonjour.find(
   { type: 'http' },
   function(service) {
-    console.log(JSON.stringify(service.host));
+    console.log(JSON.stringify(service));
     if (service.name == 'IceBox') {
       app.get('/serviceip', function(req, res) {
         res.json({ ip: service.host, port: service.port });
