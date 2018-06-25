@@ -34,7 +34,7 @@ bonjour.find(
 app.get(
   '/',
   function(req, res) {
-    app.use(express.static(__dirname + '/static/image'));
+    app.use(express.static(__dirname + '/static'));
     res.sendFile(path.join(__dirname + '/static/index.html'));
   });
 
