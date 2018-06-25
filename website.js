@@ -17,7 +17,7 @@ bonjour.find(
     console.log(JSON.stringify(service.host));
     if (service.name == 'IceBox') {
       app.get('/serviceip', function(req, res) {
-        res.json({ ip: service.host });
+        res.json({ ip: service.host, port: service.port });
       });
       app.get('/doreset', function(req, res) {
         console.log("calling reset.");
