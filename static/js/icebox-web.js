@@ -8,6 +8,7 @@ var state_configureaccount = 'configureaccount';
 
 var iceBoxIp = 'localhost';
 var iceBoxPort = 8081;
+var iceBoxNS = 'http://';
 
 var username = '';
 var avatarmail = '';
@@ -333,7 +334,7 @@ function drinkSelection(barcode, callback) {
 
 function submitUserdata(mail, vdsFlag) {
   $.ajax({
-    url: "http://" + iceBoxIp + ":" + iceBoxPort + "/consumers/" + encodeURIComponent(username),
+    url: iceBoxNS + iceBoxIp + ":" + iceBoxPort + "/consumers/" + encodeURIComponent(username),
     type: 'PUT',
     data: {
       avatarmail: mail,
@@ -354,7 +355,7 @@ function rechargeAccoundWith(amountx, callback) {
   console.log("recharge account for " + username);
 
   $.ajax({
-    url: "http://" + iceBoxIp + ":" + iceBoxPort + "/consumers/" + encodeURIComponent(username) + '/deposit',
+    url: iceBoxNS + iceBoxIp + ":" + iceBoxPort + "/consumers/" + encodeURIComponent(username) + '/deposit',
     type: 'POST',
     data: {
       amount: amountx
@@ -373,7 +374,7 @@ function correctInventory(inputBarcode, inputFullPrice, inputDiscountprice, inpu
   console.log(inputBarcode + ', ' + inputFullPrice + ', ' + inputDiscountprice + ', ' + inputQuantity + ', ' + inputEmpties);
 
   $.ajax({
-    url: "http://" + iceBoxIp + ":" + iceBoxPort + "/drinks/" + inputBarcode,
+    url: iceBoxNS + iceBoxIp + ":" + iceBoxPort + "/drinks/" + inputBarcode,
     type: 'PUT',
     data: {
       barcode: inputBarcode,
@@ -395,7 +396,7 @@ function submitNewDrinkToServer(inputNameNew, inputBarcodeNew, inputFullPrice, i
   console.log("new drink....");
 
   $.ajax({
-    url: "http://" + iceBoxIp + ":" + iceBoxPort + "/drinks/",
+    url: iceBoxNS + iceBoxIp + ":" + iceBoxPort + "/drinks/",
     type: 'POST',
     data: {
       name: inputNameNew,
@@ -424,7 +425,7 @@ function buyDrink(barcode, callback) {
   }
 
   $.ajax({
-    url: "http://" + iceBoxIp + ":" + iceBoxPort + "/consumptions/" + encodeURIComponent(username),
+    url: iceBoxNS + iceBoxIp + ":" + iceBoxPort + "/consumptions/" + encodeURIComponent(username),
     type: 'POST',
     data: {
       barcode: barcode
@@ -460,7 +461,7 @@ function displaySucesfullBuy(callback) {
 
 function registerNewUser(u, callback) {
   $.ajax({
-    url: "http://" + iceBoxIp + ":" + iceBoxPort + "/consumers/",
+    url: iceBoxNS + iceBoxIp + ":" + iceBoxPort + "/consumers/",
     type: 'POST',
     data: {
       username: u
@@ -516,6 +517,8 @@ function getIceBoxIp(callback) {
 
       iceBoxPort = connectionData.port || 8081;
 
+      iceBoxNS = window.location.protocol == 'http' ? 'http://' : 'proxy/';
+
       callback();
     },
     error: function (error) {
@@ -527,7 +530,7 @@ function getIceBoxIp(callback) {
 
 function getDrinkData(callback) {
   $.ajax({
-    url: "http://" + iceBoxIp + ":" + iceBoxPort + "/drinks",
+    url: iceBoxNS + iceBoxIp + ":" + iceBoxPort + "/drinks",
     type: 'GET',
     crossDomain: true,
     dataType: 'json',
@@ -543,7 +546,7 @@ function getDrinkData(callback) {
 
 function getUserData(callback) {
   $.ajax({
-    url: "http://" + iceBoxIp + ":" + iceBoxPort + "/consumers",
+    url: iceBoxNS + iceBoxIp + ":" + iceBoxPort + "/consumers",
     type: 'GET',
     crossDomain: true,
     dataType: 'json',

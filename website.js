@@ -4,6 +4,7 @@ var path = require('path');
 var cors = require('cors');
 var bonjour = require('bonjour')();
 var exec = require('exec');
+var request = require('request');
 
 cors({
   credentials: true,
@@ -26,6 +27,14 @@ bonjour.find(
             res.json({ok: true});
           });
         });
+      });
+      app.use('/proxy/:icebox/', function(req, res) {
+        if(req.params.icebox !== service.host + ':' + service.port) {
+          res.error(403);
+        }
+
+        var upstream_url = 'http://' + service.host + ':' + service.port + req.url;
+        req.pipe(request(upstream_url)).pipe(res);
       });
     }
   });
