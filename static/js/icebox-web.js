@@ -700,7 +700,7 @@ function renderInventory() {
 
     var drinkName = drinks[i].name;
     var barcode = drinks[i].barcode;
-    var drinkimage = mapDrinkImage(drinkName);
+    var drinkimage = mapDrinkImage(drinks[i]);
     var drinkDiv = $('<div class="col-sm-6 col-lg-2""></div>');
     var drinkName = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-drinkselect ' + addClass + '" data-code="' + barcode + '" id="drinkConfigure" role="button"><img src="' + drinkimage + '" height=200px data-code="' + barcode + '" align="center"> </br>' + drinkName + '</a>')
 
@@ -852,7 +852,7 @@ function renderDrinkSelection() {
     if (drinks[i].quantity > 0) {
       var drinkName = drinks[i].name;
       var barcode = drinks[i].barcode;
-      var drinkimage = mapDrinkImage(drinkName);
+      var drinkimage = mapDrinkImage(drinks[i]);
       var drinkDiv = $('<div class="col-sm-12 col-lg-2""></div>');
       var drinkName = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-drinkselect" data-code="' + barcode + '" id="drinkSelection" role="button"><img src="image/' + drinkimage + '" height=200px data-code="' + barcode + '" align="center"> </br>' + $('<div/>').text(drinkName).html() + '</a>')
       drinkName.appendTo(drinkDiv);
@@ -865,155 +865,10 @@ function renderDrinkSelection() {
 /*
 * service for images
 */
-function mapDrinkImage(drinkName) {
-  if (drinkName == "Club Mate") {
-    return "mate400px.png";
-  }
-  if (drinkName == "flora power") {
-    return "florapower400px.png";
-  }
-  if (drinkName == "fritz-kola Kaffee") {
-    return "fritzkaffee400px.png";
-  }
-  if (drinkName == "Müllers Malz") {
-    return "malz400px.png"
-  }
-  if (drinkName == "Premium Cola (0.5l)") {
-    return "premiumcola400px.png"
-  }
-  if (drinkName == "Wostok Tanne (0.3l)") {
-    return "wostoktanne400px.png";
-  }
-  if (drinkName == "Wostok Tanne (0.5l)") {
-    return "wostoktanne400px.png";
-  }
-  if (drinkName == "Mio Mate") {
-    return "miomio400px.png";
-  }
-  if (drinkName == "fritz-limo Zitrone") {
-    return "fritzzitrone400px.png";
-  }
-  if (drinkName == "Wostok Dattel (0.5l)") {
-    return "wostokdatel400px.png";
-  }
-  if (drinkName == "Wostok Birne (0.3l)") {
-    return "wostokbirne400px.png";
-  }
-  if (drinkName == "fritz-limo Orange") {
-    return "fritzorange400px.png";
-  }
-  if (drinkName == "Wostok Aprikose (0.3l)") {
-    return "wostokaprikose400px.png";
-  }
-  if (drinkName == "Paulaner Hefe") {
-    return "paulaner400px.png";
-  }
-  if (drinkName == "viva con Agua laut") {
-    return "vivalaut400px.png";
-  }
-  if (drinkName == "viva con Agua leise") {
-    return "vivaleise400px.png";
-  }
-  if (drinkName == "Sophie Leise") {
-    return "sophiestill400px.png";
-  }
-  if (drinkName == "Sophie Classic") {
-    return "sophieclassic400px.png";
-  }
-  if (drinkName == "Wostok Pflaume (0.3l)") {
-    return "wostokpflaume400px.png";
-  }
-  if (drinkName == "fritz-spritz Apfel") {
-    return "fritzapfel400px.png";
-  }
-  if (drinkName == "Wostok Grün (0.3l)") {
-    return "wostokgruen400px.png";
-  }
-  if (drinkName == "Wostok Grün (0.5l)") {
-    return "wostokgruen400px.png";
-  }
-  if (drinkName == "Spezi (0.5l)") {
-    return "spezi400px.png";
-  }
-  if (drinkName == "Fritz-kola zuckerfrei") {
-    return "fritzlight400px.png";
-  }
-  if (drinkName == "Proviant NaturCola") {
-    return "proviantnaturcola400px.png";
-  }
-  if (drinkName == "Proviant Natur Cola & Organge") {
-    return "proviantnaturcolaorange400px.png";
-  }
-  if (drinkName == "Mio Ginger") {
-    return "mioginger400.png";
-  }
-  if (drinkName == "Mio Banane") {
-    return "miobanane400.png";
-  }
-  if (drinkName == "Mate Mate") {
-    return "matemate400.png";
-  }
-  if (drinkName == "Buenos Mate") {
-    return "buenos400.png";
-  }
-  if (drinkName == "Rio Mate") {
-    return "rio400.png";
-  }
-  if (drinkName == "Multi Mate") {
-    return "multi400.png";
-  }
-  if (drinkName == "GuGü Cracker") {
-    return "ggcracker400.png";
-  }
-  if (drinkName == "Chateau Schoki") {
-    return "chateau400.png";
-  }
-  if (drinkName == "GuGü Erdnüsse") {
-    return "ggerdn400.png";
-  }
-  if (drinkName == "bio Riegel") {
-    return "biozentrrigel400.png";
-  }
-  if (drinkName == "5 Minuten Terrine") {
-    return "terrine400.png";
-  }
-  if (drinkName == "Alnatura Tafel (Bitter)") {
-    return "alnaturabitter400.png";
-  }
-  if (drinkName == "Alnatura Tafel (Vollmilch)") {
-    return "alnaturavollmilch400.png";
-  }
-  if (drinkName == "Alnatura Tafel (Pfefferminz)") {
-    return "alnaturapfefferminz400.png";
-  }
-  if (drinkName == "Alnatura Tafel (Nougat)") {
-    return "alnaturanougat400.png";
-  }
-  if (drinkName == "Fair Vollmilch") {
-    return "fairvoll400.png";
-  }
-  if (drinkName == "Maggi Dose") {
-    return "maggidose400.png";
-  }
-  if (drinkName == "Haribo") {
-    return "haribo400.png";
-  }
-  if (drinkName == "Quittig Apfelschorle") {
-    return "quittig400.png";
-  }
-  if (drinkName == "Roulette") {
-    return "roulette400.png";
-  }
-  if (drinkName == "morle Schorle") {
-    return "morleschorle400.png";
-  }
-  if (drinkName == "Bionade Holunder") {
-    return "bionadehol400.png";
-  }
-  if (drinkName == "Brause die Grüne") {
-    return "gruenebrause400.png";
-  }
-  return "bottle.png";
+function mapDrinkImage(drink) {
+  return drink.barcode + ".png";
+//Fallback to bottle.png (should be done on client-side)
+//  return "bottle.png";
 }
 
 function addMain() {
