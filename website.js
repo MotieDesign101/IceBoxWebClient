@@ -45,6 +45,12 @@ app.get(
     app.use(express.static(__dirname + '/static'));
     res.sendFile(path.join(__dirname + '/static/index.html'));
   });
+app.get(
+  '/image',
+  function(req, res) {
+    app.use(express.static(__dirname + '/static/image'));
+    res.sendFile(path.join(__dirname + '/static/image/bottle.png'));
+  });
 
 app.get(
   '/isiceboxdown',
