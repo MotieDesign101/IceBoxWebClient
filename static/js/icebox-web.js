@@ -854,7 +854,7 @@ function renderDrinkSelection() {
       var barcode = drinks[i].barcode;
       var drinkimage = mapDrinkImage(drinks[i]);
       var drinkDiv = $('<div class="col-sm-12 col-lg-2""></div>');
-      var drinkName = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-drinkselect" data-code="' + barcode + '" id="drinkSelection" role="button"><img src="image/' + drinkimage + '" height=200px data-code="' + barcode + '" align="center"> </br>' + $('<div/>').text(drinkName).html() + '</a>')
+      var drinkName = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-drinkselect" data-code="' + barcode + '" id="drinkSelection" role="button"><img src="' + drinkimage + '" height=200px data-code="' + barcode + '" align="center"> </br>' + $('<div/>').text(drinkName).html() + '</a>')
       drinkName.appendTo(drinkDiv);
       drinkDiv.appendTo(row1);
     }
@@ -866,7 +866,7 @@ function renderDrinkSelection() {
 * service for images
 */
 function mapDrinkImage(drink) {
-  return drink.barcode + ".png";
+  return "image/" + drink.barcode + ".png";
 //Fallback to bottle.png (should be done on client-side)
 //  return "bottle.png";
 }
