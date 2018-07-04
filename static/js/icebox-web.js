@@ -640,8 +640,8 @@ function renderRechargeAccount() {
   var row = $('<div class="row"></div>');
 
   var euroDiv = $('<div class="col-sm-12 col-lg-12""></div>');
-  var eurofive = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-moneyselect euroSelection" data-code="5" role="button"><img src="euro5.jpg" height=200px data-code="5" align="center"></a>');
-  var euroten = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-moneyselect euroSelection" data-code="10" role="button"><img src="euro10.jpg" height=200px data-code="10" align="center"></a>');
+  var eurofive = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-moneyselect euroSelection" data-code="5" role="button"><img src="image/euro5.jpg" height=200px data-code="5" align="center"></a>');
+  var euroten = $('<p><a href="#" class="btn-flat btn-block btn btn-primary btn-moneyselect euroSelection" data-code="10" role="button"><img src="image/euro10.jpg" height=200px data-code="10" align="center"></a>');
 
   eurofive.appendTo(euroDiv);
   euroten.appendTo(euroDiv);
